@@ -156,6 +156,20 @@ async function run(){
             res.send(blogs)
         });
 
+        //post or upload new blog
+        app.post('/blogs', async(req, res) => {
+            const blog = req.body;
+            const query = {email: blog.email, name: blog.name, des: blog.des, docs: blog.docs, img: blog.image};
+            const exists = await blogCollection.findOne(query);
+            if(exists){
+                return res.send({success: false, blog: exists})
+            }
+            else{
+                const result = await blogCollection.insertOne(blog);
+                res.send({success: true, result});
+            }
+        });
+
         //comment post
         app.post('/comment', async (req, res) => {
             const comment = req.body;
