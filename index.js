@@ -38,6 +38,8 @@ async function run(){
         const spiceCollection = client.db('spice-taste').collection('spices');
         const userCollection = client.db('spice-taste').collection('users');
         const messageCollection = client.db('spice-taste').collection('messages');
+        const blogCollection = client.db('spice-taste').collection('blogs');
+        const commentCollection = client.db('spice-taste').collection('comments');
         
         //login user data collect
         app.put('/user/:email', async (req, res) => {
@@ -147,6 +149,28 @@ async function run(){
                 res.send({success: true, result});
             }
         });
+
+        //blogs
+        app.get('/blogs', async(req, res) => {
+            const blogs = await blogCollection.find().toArray();
+            res.send(blogs)
+        });
+
+        //comment post
+        app.post('/comment', async (req, res) => {
+            const comment = req.body;
+            // const query = { comment: comment.comment, email: comment.email, name: comment.name, blogId: comment.blogId };
+            const result = await commentCollection.insertOne(comment);
+            return res.send({ success: true, result });
+        });
+
+        //get comment
+        app.get('/comment/:blogId', async (req, res) => {
+            const blogId = req.params.blogId;
+            const query = { blogId: blogId };
+            const comment = await commentCollection.find(query).toArray();
+            res.send(comment);
+        })
     }
     finally{}
 }
