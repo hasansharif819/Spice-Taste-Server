@@ -61,9 +61,28 @@ async function run(){
         
         //get all spices
         app.get('/spice', async(req, res) => {
-            const spices = await spiceCollection.find().toArray();
+            const page = parseInt(req.query.page);
+            const size = parseInt(req.query.size);
+
+            const query = {};
+            const cursor = spiceCollection.find(query);
+
+            let spices;
+            if(page || size){
+                spices = await cursor.skip(page*size).limit(size).toArray();
+            }
+            else{
+                spices = await spiceCollection.find().toArray();
+            }
             res.send(spices);
         });
+
+        //pagination
+        app.get('/spiceCount', async(req, res) => {
+            const count = await spiceCollection.estimatedDocumentCount()
+            res.send({count});
+        });
+
         //get single spice using id
         app.get('/spice/:id', async(req, res) => {
             const id = req.params.id;
