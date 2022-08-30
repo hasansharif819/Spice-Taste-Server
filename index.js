@@ -184,6 +184,11 @@ async function run(){
             const query = { blogId: blogId };
             const comment = await commentCollection.find(query).toArray();
             res.send(comment);
+        });
+        //get user message
+        app.get('/message', async(req, res) => {
+            const message = await messageCollection.find().toArray();
+            res.send(message);
         })
     }
     finally{}
